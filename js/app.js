@@ -10,6 +10,7 @@ class CalorieTracker {
         this._displayCaloriesConsumed();
         this._displayCaloriesBurned();
         this._displayCaloriesRemain();
+        this._displayCaloriesProgress();
     }
 
 //Public methods/API
@@ -59,13 +60,34 @@ class CalorieTracker {
         const caloriesRemainEl = document.getElementById('calories-remaining');
         let remain = this._caloriesLimit - this._totalCalories; 
         caloriesRemainEl.innerHTML = remain;
+
+        const progressEl = document.getElementById('calorie-progress')
+        if(remain < 0) {
+            caloriesRemainEl.parentElement.parentElement.classList.remove('bg-light');
+            caloriesRemainEl.parentElement.parentElement.classList.add('bg-danger');
+            progressEl.classList.remove('bg-success');
+            progressEl.classList.add('bg-danger');
+        } else {
+            caloriesRemainEl.parentElement.parentElement.classList.remove('bg-danger');
+            caloriesRemainEl.parentElement.parentElement.classList.add('bg-light');
+            progressEl.classList.remove('bg-danger');
+            progressEl.classList.add('bg-success');
+        }
+    }
+
+    _displayCaloriesProgress() {
+        const progressEl = document.getElementById('calorie-progress');
+        const percentage = (this._totalCalories / this._caloriesLimit) * 100;
+        const width = Math.min(percentage, 100); 
+        progressEl.style.width = `${width}%`;   
     }
 
     _render() {
         this._displayCaloriesTotal();
         this._displayCaloriesConsumed();
         this._displayCaloriesBurned();
-        this._displayCaloriesRemain()
+        this._displayCaloriesRemain();
+        this._displayCaloriesProgress();
     }
 }
 
@@ -90,11 +112,13 @@ const tracker = new CalorieTracker();
 
 const breakfast = new Meal('Breakfast', 400);
 const run = new Workout('Morning run', 300);
+const lunch = new Meal ('Lunch', 350)
 
 
 
 tracker.addMeal(breakfast);
 tracker.addWorkout(run);
+tracker.addMeal(lunch);
 
 console.log(tracker._meals)
 console.log(tracker._workouts);
